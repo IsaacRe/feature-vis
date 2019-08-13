@@ -85,6 +85,6 @@ def visualize_feats(network, *features, num_updates=2000, lr=0.005, **input_args
         optim = InputOptimizer(feat, **input_args)
         inp = optim.optimize(num_updates, lr)
         # return the image
-        images += input2image(inp)
+        images += [input2image(inp)]
     return images
 
