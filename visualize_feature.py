@@ -11,17 +11,14 @@ def input2gray(img):
 
 def input2image(img):
     if len(img.shape) > 2:
-        axis = (1, 2)
-        mode = 'RGBA'
-        idx = (slice(None), None, None)
+        img -= img.min(axis=(1, 2))[:, None, None]
+        img *= 255. / img.max(axis=(1, 2))[:, None, None]
+        img = np.transpose(img, (1, 2, 0))
+        return Image.fromarray(img.astype(int), 'RGB')
     else:
-        axis = (0, 1)
-        mode = 'L'
-        idx = slice(None)
-
-    img -= img.min(axis=axis)[idx]
-    img *= 255. / img.max(axis=axis)[idx]
-    return Image.fromarray(img.astype(int), mode)
+        img -= img.min()
+        img *= 255. / img.max()
+        return Image.fromarray(img.astype(int), 'L')
 
 
 class FeatureTracker:
