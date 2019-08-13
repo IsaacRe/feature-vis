@@ -64,13 +64,13 @@ class InputOptimizer:
         return inp.data.squeeze().cpu().numpy()
 
 
-def visualize_feats(network, *features, num_updates=2000, lr=0.005):
+def visualize_feats(network, *features, num_updates=2000, lr=0.005, **input_args):
     images = []
     for feature in features:
         # get FeatureTracker object
         feat = FeatureTracker(network, *feature)
         # get InputOptimizer
-        optim = InputOptimizer(feat)
+        optim = InputOptimizer(feat, **input_args)
         inp = optim.optimize(num_updates, lr)
         # return the image
         images += input2image(inp)
