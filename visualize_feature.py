@@ -57,7 +57,7 @@ class InputOptimizer:
         inp = self._random_input()
         for i in range(num_updates):
             out = self.feature_tracker.get_output(inp)
-            out.backward()
+            torch.sum(out).backward()
             inp.data += inp.grad.data * lr
             inp.grad.zero_()
         # return optimized single-channel image
