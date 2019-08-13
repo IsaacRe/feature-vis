@@ -3,10 +3,22 @@ import numpy as np
 from PIL import Image
 
 
-def input2image(img):
+def input2gray(img):
     img -= img.min()
     img *= 255. / (img.max() - img.min())
     return Image.fromarray(img.astype(int), 'L')
+
+
+def input2image(img):
+    if len(img.shape) > 2:
+        axis = (1, 2)
+        mode = 'RGBA'
+    else:
+        axis = (0, 1)
+        mode = 'L'
+    img -= img.min(axis=axis)
+    img *= 255. / img.max(axis=axis)
+    return Image.fromarray(img.astype(int), mode)
 
 
 class FeatureTracker:
@@ -60,7 +72,7 @@ class InputOptimizer:
             torch.sum(out).backward()
             inp.data += inp.grad.data * lr
             inp.grad.zero_()
-        # return optimized single-channel image
+        # return optimized input
         return inp.data.squeeze().cpu().numpy()
 
 
