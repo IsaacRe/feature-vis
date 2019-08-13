@@ -13,11 +13,14 @@ def input2image(img):
     if len(img.shape) > 2:
         axis = (1, 2)
         mode = 'RGBA'
+        idx = (slice(None), None, None)
     else:
         axis = (0, 1)
         mode = 'L'
-    img -= img.min(axis=axis)
-    img *= 255. / img.max(axis=axis)
+        idx = slice(None)
+
+    img -= img.min(axis=axis)[idx]
+    img *= 255. / img.max(axis=axis)[idx]
     return Image.fromarray(img.astype(int), mode)
 
 
