@@ -46,20 +46,21 @@ class InputMap:
         Returns random network input to be optimized
         :return: random input
         """
-        img = np.random.uniform(0, 255, (1, 28, 28))
+        img = np.random.uniform(0, 255, (1, 1, 28, 28))
         img /= 255.
         img -= mean_MNIST
         img /= std_MNIST
         return torch.FloatTensor(img).requires_grad_(True)
 
     def _input2image_MNIST(self, img):
-        # dereference batch dim
-        img = img[0].data.clone().cpu().numpy()
+        # dereference batch and depth dim
+        img = img[0, 0].data.clone().cpu().numpy()
         img *= std_MNIST
         img += mean_MNIST
         img *= 255.
         img[np.where(img > 255)] = 255
-        return img.transpose(1, 2, 0).astype(int)
+        img[np.where(img < 0)] = 0
+        return img.astype(int)
 
     def _random_input_CIFAR(self):
         """
@@ -79,6 +80,7 @@ class InputMap:
         img += mean_CIFAR[:, None, None]
         img *= 255.
         img[np.where(img > 255)] = 255
+        img[np.where(img < 0)] = 0
         return img.transpose(1, 2, 0).astype(int)
 
     def get_output(self, inp):
